@@ -1,26 +1,39 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../app/store'
+import { inputType } from '../interfaces/interfaces'
+
 
 export interface formState {
-  title: string
+  inputs: inputType[]
 }
 
 const initialState: formState = {
-  title: ''
+  inputs: []
 }
+
+
+type isValidType = (value: string, type: string) => boolean
+
+const isValidInput: isValidType = (value, type) => {
+  return true
+}
+
 
 export const formSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
     addWord: (state, action: PayloadAction<string>) => {
-      state.title += action.payload
+      // state.title += action.payload
+    },
+    checkInput: (state, action: PayloadAction<inputType>) => {
+      state.inputs = {...state.inputs, ...action.payload}
     },
   }
 });
 
-export const { addWord } = formSlice.actions
+export const { checkInput } = formSlice.actions
 
-export const selectForm = (state: RootState) => state.form.title;
+export const selectInputs = (state: RootState) => state.form.inputs;
 
 export default formSlice.reducer;

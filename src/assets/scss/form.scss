@@ -13,7 +13,7 @@ body {
 .form {
 	background: #fff;
 	margin: 2rem auto 0;
-	width: 60%;
+	width: 400px;
 
 
 	&__wrapper {
@@ -74,6 +74,7 @@ body {
 		padding: 0.2rem;
 		transition: .2s ease-in-out;
 		pointer-events: none;
+		text-transform: capitalize;
 	}
 
 	
@@ -85,8 +86,7 @@ body {
 		transition: border-color .2s ease-in-out, box-shadow .2s linear;
 
 		&--warning {
-			border-bottom-color: #e0211b;
-			color: #e0211b;
+			border-bottom-color: #e0211b !important;
 		}
 
 		&--success {
@@ -96,9 +96,9 @@ body {
 
 		&:hover,
 		&:focus {
-			border-color:#767676;
-			box-shadow: inset 0 0 3px #000;
+			box-shadow: inset 0 0 7px 1px rgba(0,0,0,.2);
 			color: #000;
+			outline: none;
 		}
 
 		&:focus {
