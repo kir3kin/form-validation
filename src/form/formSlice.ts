@@ -1,39 +1,91 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../app/store'
-import { inputType } from '../interfaces/interfaces'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { sendFormData } from '../app/formAPI'
+import { AppThunk, RootState } from '../app/store'
+import { iInputType } from '../interfaces/interfaces'
 
-
-export interface formState {
-  inputs: inputType[]
+interface iFormState {
+  inputs: iInputType
+  loading: boolean
+  formDisable: boolean
+  logIn: {
+    msg: string
+    status: 'logged' | 'not logged'
+  }
+}
+const initialState: iFormState = {
+  inputs: {},
+  loading: false,
+  formDisable: false,
+  logIn: {
+    msg: '',
+    status: 'not logged'
+  }
 }
 
-const initialState: formState = {
-  inputs: []
-}
+export const logIn = createAsyncThunk(
+  'form/sendFormData',
+  async (emptyStoreInputs: iInputType, thunkAPI) => {
+    const response = await sendFormData()
+    thunkAPI.dispatch(hideLogStatus())
+    return {
+      data: response.data,
+      emptyStoreInputs
+    }
+  }
+)
 
-
-type isValidType = (value: string, type: string) => boolean
-
-const isValidInput: isValidType = (value, type) => {
-  return true
-}
-
+export const hideLogStatus = createAsyncThunk(
+  'form/hideLogStatus',
+  async () => {
+    await new Promise<string>((resolve) =>
+      setTimeout(() => resolve(''), 2000)
+    )
+  }
+)
 
 export const formSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
-    addWord: (state, action: PayloadAction<string>) => {
-      // state.title += action.payload
+    changeInput(
+      state,
+      action: PayloadAction<iInputType>
+    ) {
+      state.inputs = {
+        ...state.inputs,
+        ...action.payload
+      }
     },
-    checkInput: (state, action: PayloadAction<inputType>) => {
-      state.inputs = {...state.inputs, ...action.payload}
-    },
-  }
-});
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(logIn.pending, state => {
+        state.loading = true
+        state.formDisable= true
+      })
+      .addCase(logIn.fulfilled, (state, action) => {
+        state.loading = false
+        state.formDisable = false
+        state.inputs = {
+          ...state.inputs,
+          ...action.payload.emptyStoreInputs
+        }
+        state.logIn = {
+          msg: action.payload.data,
+          status: 'logged'
+        }
+      })
+      .addCase(hideLogStatus.fulfilled, state => {
+        state.logIn.status = 'not logged'
+      })
+  },
+})
 
-export const { checkInput } = formSlice.actions
+export const { changeInput } = formSlice.actions
 
 export const selectInputs = (state: RootState) => state.form.inputs;
+export const selectLoading = (state: RootState) => state.form.loading;
+export const selectFormDisable = (state: RootState) => state.form.formDisable;
+export const selectLogIn = (state: RootState) => state.form.logIn
 
-export default formSlice.reducer;
+export default formSlice.reducer

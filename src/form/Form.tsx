@@ -1,61 +1,144 @@
-import React, { useState } from "react"
-import { useAppSelector, useAppDispatch } from '../app/hooks'
-// import { addWord, selectForm } from './formSlice'
-import { checkInput, selectInputs } from "./formSlice"
-import { inputType } from "../interfaces/interfaces"
+import React, { useEffect } from "react"
+import { useAppDispatch, useAppSelector } from "../app/hooks"
+import { defaultValidPatters } from "../app/defaultValidPatters"
 import '../assets/scss/form.scss'
-import { InputAlert } from "./InputAlert"
+import { iInputContent, iInputType } from "../interfaces/interfaces"
+import { changeInput, selectInputs, logIn, selectLoading, selectFormDisable, selectLogIn } from "./formSlice"
 import { Input } from "./Input"
+import { Loader } from "../components/Loader"
 
 export const Form: React.FC = () => {
-	let storeInputs = useAppSelector(selectInputs)
 	const dispatch = useAppDispatch()
-	const [newInputs, setNewInputs] = useState<inputType[]>([])
-	
-	const changeInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const storeInputs = useAppSelector(selectInputs)
+	const loading = useAppSelector(selectLoading)
+	const formDisable = useAppSelector(selectFormDisable)
+	const logInUser = useAppSelector(selectLogIn)
 
-		setNewInputs((prev: inputType[]) => {
-			const inputName = event.target.name
-			if (!inputName) return prev
-			const inputValue = event.target.value
-			const found = prev.length && prev.find(input => input.name === inputName)
+	const useRegister = (name: string, type: string, pattern?: string, defaultValue: string = '') => {
 
-			if (found) {
-				found.data.value = inputValue
-				return prev
+		const newInput: iInputType = {
+			[name]: {
+				type,
+				value: defaultValue,
+				pattern: pattern ? pattern.toString() : '',
+				isValid: false,
+				isChecked: false
 			}
-			else {
-				return [
-					...prev,
-					...[{
-						name: inputName,
-						data:  {
-							type: event.target.type,
-							value: inputValue,
-							isValid: false
-						} 
-					}]
-				]
-			}
-		})	
+		}
+		useEffect(() => {
+			dispatch(changeInput(newInput))
+		}, [])
+
+		return {
+			name,
+			type,
+			value: defaultValue,
+			inputHandler
+		}
 	}
 
+	const validateInput = (input: iInputContent): void => {
+		const inputPattern: RegExp = input.pattern ? new RegExp(input.pattern) : defaultValidPatters(input.type)
+		input.isValid = inputPattern.test(input.value)
+		input.isChecked = true
+	}
+	
+	const inputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const inputValue = event.target.value
+		const inputType = event.target.type
+		const inputName = event.target.name
+		const newInput: iInputType = {
+			[inputName]: {
+				type: inputType,
+				value: inputValue,
+				pattern: storeInputs[inputName].pattern
+			}
+		}
+		validateInput(newInput[inputName])
+		dispatch(changeInput(newInput))
+	}
+
+	const submitHandler = (event: React.FormEvent) => {
+		event.preventDefault()
+		type errors = {
+			name: string
+			content: iInputContent
+		}
+		const errors: errors[] = []
+		const collection: errors[] = []
+
+		Object.keys(storeInputs).map(input => {
+			let tempInput = {
+				name: input,
+				content : {...storeInputs[input]}
+			}
+			if (!storeInputs[input].isChecked) {
+				errors.push(tempInput)
+			} else {
+				collection.push(tempInput)
+			}
+			return input
+		})
+
+		if (errors.length) {
+			errors.map(input => {
+				validateInput(input.content)
+				dispatch(changeInput({[input.name]: input.content}))
+			})
+		} else {
+			let newStoreInputs: iInputType = {}
+			collection.map(input => {
+				input.content = {
+					...input.content,
+					...{
+						value: '',
+						isChecked: false,
+						isValid: false
+					}
+				}
+				newStoreInputs = {
+					...newStoreInputs,
+					...{[input.name]: input.content}
+				}
+			})
+			dispatch(logIn(newStoreInputs))
+		}
+	}
 
 	return (
-		<form className="form">
+		<form
+			className="form"
+			onSubmit={event => submitHandler(event)}
+		>
 			<div className="form__wrapper">
+				{logInUser.status === 'logged' && (
+					<div className="form__info">{logInUser.msg}</div>
+				)}
 				<h2 className="form__header">Log in</h2>
 				<div className="form__body">
-					<Input inputHandler={changeInputHandler} type="email" />
-
-					<Input inputHandler={changeInputHandler} type="tel" />
-
-					<Input inputHandler={changeInputHandler} type="password" />
-
-					<button
-						type="submit"
-						className="form__button"
-					>Send</button>
+					<Input
+						id="user-email"
+						label="email"
+						{...useRegister("user_email", "tel", '\\w')}
+						/>
+					<Input
+						id="user-phone"
+						label="phone number"
+						{...useRegister("user_phone", "tel", '\\w')}
+					/>
+					<Input
+						id="user-password"
+						label="password"
+						{...useRegister("user_password", "password", '\\w')}
+						// {...useRegister("user_password", "password", '^[\\w!?@()&$-]{10,20}$')}
+					/>
+					{loading ? <Loader /> : (
+						<button
+							disabled={formDisable}
+							type="submit"
+							className="form__button"
+						>Send</button>
+					)}
 				</div>
 			</div>
 		</form>
