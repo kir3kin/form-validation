@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import { defaultValidPatters } from "../app/defaultValidPatters"
 import '../assets/scss/form.scss'
-import { iInputContent, iInputType } from "../interfaces/interfaces"
+import { iInputContent, iInputType, inputFields } from "../interfaces/interfaces"
 import { changeInput, selectInputs, logIn, selectLoading, selectFormDisable, selectLogIn } from "./formSlice"
 import { Input } from "./Input"
 import { Loader } from "../components/Loader"
@@ -15,7 +15,7 @@ export const Form: React.FC = () => {
 	const formDisable = useAppSelector(selectFormDisable)
 	const logInUser = useAppSelector(selectLogIn)
 
-	const useRegister = (name: string, type: string, pattern?: string, defaultValue: string = '') => {
+	const useRegister = (name: string, type: inputFields, pattern?: string, defaultValue: string = '') => {
 
 		const newInput: iInputType = {
 			[name]: {
@@ -130,31 +130,31 @@ export const Form: React.FC = () => {
 						id="user-email"
 						label="email"
 						{...useRegister("user_email", "email")}
-						/>
+					/>
 					<Input
 						id="user-phone"
 						label="phone number"
 						{...useRegister("user_phone", "tel")}
-						/>
+					/>
 					<Input
 						id="user-password"
 						label="password"
 						{...useRegister("user_password", "password", '^[\\w!?@()&$-]{10,20}$')}
-						/>
-						<CSSTransition
-							in={loading}
-							timeout={800}
-							classNames={'alert'}
-							mountOnEnter
-							unmountOnExit
-						>
-							<Loader />
-						</CSSTransition>
-							<button
-							disabled={formDisable}
-							type="submit"
-							className="form__button"
-							>Send</button>
+					/>
+					<CSSTransition
+						in={loading}
+						timeout={800}
+						classNames={'alert'}
+						mountOnEnter
+						unmountOnExit
+					>
+						<Loader />
+					</CSSTransition>
+					<button
+					disabled={formDisable}
+					type="submit"
+					className="form__button"
+					>Send</button>
 				</div>
 			</div>
 		</form>
