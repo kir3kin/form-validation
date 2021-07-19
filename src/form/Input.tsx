@@ -2,7 +2,7 @@ import React from "react"
 import { InputAlert } from "./InputAlert"
 import { inputProps } from "../interfaces/interfaces"
 import { useAppSelector } from "../app/hooks"
-import { selectFormDisable, selectInputs } from "./formSlice"
+import { selectInputs, selectMinor } from "./formSlice"
 import { CSSTransition } from 'react-transition-group'
 
 export const Input: React.FC<inputProps> = ({
@@ -14,7 +14,7 @@ export const Input: React.FC<inputProps> = ({
 	inputHandler
 }) => {
 	const storeInputs = useAppSelector(selectInputs)
-	const formDisable = useAppSelector(selectFormDisable)
+	const minorData = useAppSelector(selectMinor)
 	// default options
 	let inputAlert = false
 	const labelClassName: string[] = ['item__label']
@@ -50,7 +50,7 @@ export const Input: React.FC<inputProps> = ({
 				value={defaultInput.value}
 				className={inputClassName.join(' ')}
 				onChange={event => inputHandler(event)}
-				disabled={formDisable}
+				disabled={minorData.formDisable}
 			/>
 			<label
 				htmlFor={defaultInput.id}

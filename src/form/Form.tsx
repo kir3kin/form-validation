@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks"
 import { defaultValidPatters } from "../app/defaultValidPatters"
 import '../assets/scss/form.scss'
 import { iInputContent, iInputType, inputFields } from "../interfaces/interfaces"
-import { changeInput, selectInputs, logIn, selectLoading, selectFormDisable, selectLogIn } from "./formSlice"
+import { changeInput, selectInputs, logIn, selectMinor } from "./formSlice"
 import { Input } from "./Input"
 import { Loader } from "../components/Loader"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
@@ -11,9 +11,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 export const Form: React.FC = () => {
 	const dispatch = useAppDispatch()
 	const storeInputs = useAppSelector(selectInputs)
-	const loading = useAppSelector(selectLoading)
-	const formDisable = useAppSelector(selectFormDisable)
-	const logInUser = useAppSelector(selectLogIn)
+	const minorData = useAppSelector(selectMinor)
 
 	const useRegister = (name: string, type: inputFields, pattern?: string, defaultValue: string = '') => {
 
@@ -115,13 +113,13 @@ export const Form: React.FC = () => {
 		>
 			<div className="form__wrapper">
 				<CSSTransition
-					in={logInUser.status === 'logged'}
+					in={minorData.logIn.status === 'logged'}
 					timeout={800}
 					classNames={'alert'}
 					mountOnEnter
 					unmountOnExit
 				>
-					<div className="form__info">{logInUser.msg}</div>
+					<div className="form__info">{minorData.logIn.msg}</div>
 				</CSSTransition>
 
 				<h2 className="form__header">Log in</h2>
@@ -142,7 +140,7 @@ export const Form: React.FC = () => {
 						{...useRegister("user_password", "password", '^[\\w!?@()&$-]{10,20}$')}
 					/>
 					<CSSTransition
-						in={loading}
+						in={minorData.loading}
 						timeout={800}
 						classNames={'alert'}
 						mountOnEnter
@@ -151,7 +149,7 @@ export const Form: React.FC = () => {
 						<Loader />
 					</CSSTransition>
 					<button
-					disabled={formDisable}
+					disabled={minorData.formDisable}
 					type="submit"
 					className="form__button"
 					>Send</button>
