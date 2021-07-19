@@ -36,12 +36,19 @@ body {
 		z-index: 1;
 		
 		border-radius: 1rem;
-		background: rgba(#3edaca,.5);
+		background: rgba(#ff5a00,.8);
 		font-size: 2rem;
 		text-align: center;
 		line-height: 6rem;
 		font-weight: bold;
-		color: #0d7066;
+		color: #fff;
+	}
+
+	&__loader {
+		position: absolute;
+		bottom: 0;
+		left: 30%;
+
 	}
 
 	&__header {
@@ -59,7 +66,7 @@ body {
 	}
 
 	&__button {
-		margin-bottom: 2rem;
+		margin-bottom: 1rem;
 		margin-left: auto;
 		display: flex;
 		justify-content: flex-end;
@@ -136,3 +143,18 @@ body {
 	top: -1.2rem;
 	left: 0.5rem;
 }
+
+
+.alert-enter {
+	opacity: 0;
+}
+
+.alert-enter-active {
+	opacity: 1;
+  transition: .8s ease-in-out;
+}
+.alert-exit-active {
+	opacity: 0;
+	transition: .8s ease-in-out;
+}
+

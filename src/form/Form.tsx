@@ -6,6 +6,7 @@ import { iInputContent, iInputType } from "../interfaces/interfaces"
 import { changeInput, selectInputs, logIn, selectLoading, selectFormDisable, selectLogIn } from "./formSlice"
 import { Input } from "./Input"
 import { Loader } from "../components/Loader"
+import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 export const Form: React.FC = () => {
 	const dispatch = useAppDispatch()
@@ -60,19 +61,19 @@ export const Form: React.FC = () => {
 
 	const submitHandler = (event: React.FormEvent) => {
 		event.preventDefault()
-		type errors = {
+		type errorsType = {
 			name: string
 			content: iInputContent
 		}
-		const errors: errors[] = []
-		const collection: errors[] = []
+		const errors: errorsType[] = []
+		const collection: errorsType[] = []
 
 		Object.keys(storeInputs).map(input => {
 			let tempInput = {
 				name: input,
 				content : {...storeInputs[input]}
 			}
-			if (!storeInputs[input].isChecked) {
+			if (!storeInputs[input].isChecked || !storeInputs[input].isValid) {
 				errors.push(tempInput)
 			} else {
 				collection.push(tempInput)
@@ -84,6 +85,7 @@ export const Form: React.FC = () => {
 			errors.map(input => {
 				validateInput(input.content)
 				dispatch(changeInput({[input.name]: input.content}))
+				return input
 			})
 		} else {
 			let newStoreInputs: iInputType = {}
@@ -100,6 +102,7 @@ export const Form: React.FC = () => {
 					...newStoreInputs,
 					...{[input.name]: input.content}
 				}
+				return input
 			})
 			dispatch(logIn(newStoreInputs))
 		}
@@ -107,13 +110,20 @@ export const Form: React.FC = () => {
 
 	return (
 		<form
-			className="form"
-			onSubmit={event => submitHandler(event)}
+		className="form"
+		onSubmit={event => submitHandler(event)}
 		>
 			<div className="form__wrapper">
-				{logInUser.status === 'logged' && (
+				<CSSTransition
+					in={logInUser.status === 'logged'}
+					timeout={800}
+					classNames={'alert'}
+					mountOnEnter
+					unmountOnExit
+				>
 					<div className="form__info">{logInUser.msg}</div>
-				)}
+				</CSSTransition>
+
 				<h2 className="form__header">Log in</h2>
 				<div className="form__body">
 					<Input
@@ -125,20 +135,27 @@ export const Form: React.FC = () => {
 						id="user-phone"
 						label="phone number"
 						{...useRegister("user_phone", "tel", '\\w')}
-					/>
+						/>
 					<Input
 						id="user-password"
 						label="password"
 						{...useRegister("user_password", "password", '\\w')}
 						// {...useRegister("user_password", "password", '^[\\w!?@()&$-]{10,20}$')}
-					/>
-					{loading ? <Loader /> : (
-						<button
+						/>
+						<CSSTransition
+							in={loading}
+							timeout={800}
+							classNames={'alert'}
+							mountOnEnter
+							unmountOnExit
+						>
+							<Loader />
+						</CSSTransition>
+							<button
 							disabled={formDisable}
 							type="submit"
 							className="form__button"
-						>Send</button>
-					)}
+							>Send</button>
 				</div>
 			</div>
 		</form>

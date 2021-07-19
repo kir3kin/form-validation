@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { sendFormData } from '../app/formAPI'
-import { AppThunk, RootState } from '../app/store'
+import { RootState } from '../app/store'
 import { iInputType } from '../interfaces/interfaces'
 
 interface iFormState {

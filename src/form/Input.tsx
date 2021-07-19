@@ -2,7 +2,8 @@ import React from "react"
 import { InputAlert } from "./InputAlert"
 import { inputProps } from "../interfaces/interfaces"
 import { useAppSelector } from "../app/hooks"
-import { selectFormDisable, selectInputs, selectLoading } from "./formSlice"
+import { selectFormDisable, selectInputs } from "./formSlice"
+import { CSSTransition } from 'react-transition-group'
 
 export const Input: React.FC<inputProps> = ({
 	id,
@@ -55,11 +56,18 @@ export const Input: React.FC<inputProps> = ({
 				htmlFor={defaultInput.id}
 				className={labelClassName.join(' ')}
 			>{defaultInput.label}</label>
-			{
-				inputAlert && <InputAlert
+			
+			<CSSTransition
+				in={inputAlert}
+				timeout={800}
+				classNames={'alert'}
+				mountOnEnter
+				unmountOnExit
+			>
+				<InputAlert
 					text={`Please, enter correct ${defaultInput.label}`}
 				/>
-			}
+			</CSSTransition>
 		</div>
 	)
 } 
