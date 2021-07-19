@@ -129,18 +129,17 @@ export const Form: React.FC = () => {
 					<Input
 						id="user-email"
 						label="email"
-						{...useRegister("user_email", "tel", '\\w')}
+						{...useRegister("user_email", "email")}
 						/>
 					<Input
 						id="user-phone"
 						label="phone number"
-						{...useRegister("user_phone", "tel", '\\w')}
+						{...useRegister("user_phone", "tel")}
 						/>
 					<Input
 						id="user-password"
 						label="password"
-						{...useRegister("user_password", "password", '\\w')}
-						// {...useRegister("user_password", "password", '^[\\w!?@()&$-]{10,20}$')}
+						{...useRegister("user_password", "password", '^[\\w!?@()&$-]{10,20}$')}
 						/>
 						<CSSTransition
 							in={loading}
