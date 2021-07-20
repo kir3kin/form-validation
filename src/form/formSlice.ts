@@ -83,9 +83,9 @@ export const formSlice = createSlice({
 
 export const { changeInput } = formSlice.actions
 
-export const selectInputs = (state: RootState) => state.form.inputs;
-export const selectMinor = (state: RootState) => {
+export const selectState = (state: RootState) => {
   return {
+    inputs: state.form.inputs,
     loading: state.form.loading,
     formDisable: state.form.formDisable,
     logIn: state.form.logIn

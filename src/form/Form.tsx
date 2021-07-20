@@ -3,15 +3,14 @@ import { useAppDispatch, useAppSelector } from "../app/hooks"
 import { defaultValidPatters } from "../app/defaultValidPatters"
 import '../assets/scss/form.scss'
 import { iInputContent, iInputType, inputFields } from "../interfaces/interfaces"
-import { changeInput, selectInputs, logIn, selectMinor } from "./formSlice"
+import { changeInput, logIn, selectState } from "./formSlice"
 import { Input } from "./Input"
 import { Loader } from "../components/Loader"
-import { CSSTransition, TransitionGroup } from "react-transition-group"
+import { CSSTransition } from "react-transition-group"
 
 export const Form: React.FC = () => {
 	const dispatch = useAppDispatch()
-	const storeInputs = useAppSelector(selectInputs)
-	const minorData = useAppSelector(selectMinor)
+	const {formDisable, loading, logIn: logInData, inputs: storeInputs} = useAppSelector(selectState)
 
 	const useRegister = (name: string, type: inputFields, pattern?: string, defaultValue: string = '') => {
 
@@ -113,13 +112,13 @@ export const Form: React.FC = () => {
 		>
 			<div className="form__wrapper">
 				<CSSTransition
-					in={minorData.logIn.status === 'logged'}
+					in={logInData.status === 'logged'}
 					timeout={800}
 					classNames={'alert'}
 					mountOnEnter
 					unmountOnExit
 				>
-					<div className="form__info">{minorData.logIn.msg}</div>
+					<div className="form__info">{logInData.msg}</div>
 				</CSSTransition>
 
 				<h2 className="form__header">Log in</h2>
@@ -140,7 +139,7 @@ export const Form: React.FC = () => {
 						{...useRegister("user_password", "password", '^[\\w!?@()&$-]{10,20}$')}
 					/>
 					<CSSTransition
-						in={minorData.loading}
+						in={loading}
 						timeout={800}
 						classNames={'alert'}
 						mountOnEnter
@@ -149,7 +148,7 @@ export const Form: React.FC = () => {
 						<Loader />
 					</CSSTransition>
 					<button
-					disabled={minorData.formDisable}
+					disabled={formDisable}
 					type="submit"
 					className="form__button"
 					>Send</button>
