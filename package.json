@@ -18,7 +18,6 @@
     "react-redux": "^7.2.4",
     "react-scripts": "4.0.3",
     "react-transition-group": "^4.4.2",
-    "redux-devtools-extension": "^2.13.9",
     "typescript": "^4.1.6"
   },
   "scripts": {

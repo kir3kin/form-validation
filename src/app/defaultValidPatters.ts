@@ -1,5 +1,3 @@
-import { inputFields } from "../interfaces/interfaces"
-
 type validPatternsProps = (type: string) => RegExp
 
 export const defaultValidPatters: validPatternsProps = type => {
