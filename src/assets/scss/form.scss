@@ -1,9 +1,12 @@
 html {
 	font-size: 62.5%;
+	height: 100%;
 }
 
 body {
-	background:#eee;
+	background: radial-gradient(closest-side, hsl(21, 62%, 75%), hsl(198, 45%, 45%));
+	background-repeat: no-repeat;
+	background-size: cover;
 
 	* {
 		box-sizing: border-box;
@@ -36,7 +39,7 @@ body {
 		z-index: 1;
 		
 		border-radius: 1rem;
-		background: rgba(#ff5a00,.8);
+		background: rgba(hsl(21, 100%, 50%),.8);
 		font-size: 2rem;
 		text-align: center;
 		line-height: 6rem;
@@ -85,7 +88,6 @@ body {
 		}
 	}
 }
-
 
 .item {
 	position: relative;
